@@ -70,8 +70,8 @@ class rex
     /**
      * Sets a property. Changes will not be persisted accross http request boundaries.
      *
-     * @param string $key   Key of the property
-     * @param mixed  $value Value for the property
+     * @param string $key Key of the property
+     * @param mixed $value Value for the property
      *
      * @throws InvalidArgumentException on invalid parameters
      *
@@ -128,8 +128,8 @@ class rex
     /**
      * Returns a property.
      *
-     * @param string $key     Key of the property
-     * @param mixed  $default Default value, will be returned if the property isn't set
+     * @param string $key Key of the property
+     * @param mixed $default Default value, will be returned if the property isn't set
      *
      * @throws InvalidArgumentException on invalid parameters
      *
@@ -288,7 +288,15 @@ class rex
      */
     public static function isSafeMode()
     {
-        return self::isBackend() && PHP_SESSION_ACTIVE == session_status() && rex_session('safemode', 'boolean', false);
+        if (!self::isBackend()) {
+            return false;
+        }
+
+        if (self::getProperty('safemode')) {
+            return true;
+        }
+
+        return PHP_SESSION_ACTIVE == session_status() && rex_session('safemode', 'boolean', false);
     }
 
     /**
@@ -329,7 +337,7 @@ class rex
     /**
      * Returns the current user.
      *
-     * @return null|rex_user
+     * @return rex_user|null
      */
     public static function getUser()
     {
@@ -355,7 +363,7 @@ class rex
     /**
      * Returns the current impersonator user.
      *
-     * @return null|rex_user
+     * @return rex_user|null
      */
     public static function getImpersonator()
     {
@@ -367,7 +375,7 @@ class rex
     /**
      * Returns the console application.
      *
-     * @return null|rex_console_application
+     * @return rex_console_application|null
      */
     public static function getConsole()
     {
@@ -406,7 +414,7 @@ class rex
     /**
      * Returns the server URL.
      *
-     * @param null|string $protocol
+     * @param string|null $protocol
      *
      * @return string
      */
@@ -461,7 +469,7 @@ class rex
      * @param string $path
      * @return non-empty-string|false
      */
-    #[\JetBrains\PhpStorm\Deprecated(reason: 'since 5.10, use `rex_version::gitHash` instead', replacement: 'rex_version::gitHash(%parametersList%)')]
+    #[JetBrains\PhpStorm\Deprecated(reason: 'since 5.10, use `rex_version::gitHash` instead', replacement: 'rex_version::gitHash(%parametersList%)')]
     public static function getVersionHash($path, ?string $repo = null)
     {
         return rex_version::gitHash($path, $repo) ?? false;
@@ -488,7 +496,7 @@ class rex
      * Returns the title tag and if the property "use_accesskeys" is true, the accesskey tag.
      *
      * @param string $title Title
-     * @param string $key   Key for the accesskey
+     * @param string $key Key for the accesskey
      *
      * @return string
      */

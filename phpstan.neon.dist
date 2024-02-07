@@ -9,24 +9,18 @@ parameters:
     paths:
         # restrict to core and core addons, ignore other locally installed addons
         - redaxo/src/core
-        - redaxo/src/addons/backup
         - redaxo/src/addons/be_style
-        - redaxo/src/addons/cronjob
         - redaxo/src/addons/debug
         - redaxo/src/addons/install
         - redaxo/src/addons/media_manager
         - redaxo/src/addons/mediapool
         - redaxo/src/addons/metainfo
-        - redaxo/src/addons/phpmailer
         - redaxo/src/addons/project
         - redaxo/src/addons/structure
-        - redaxo/src/addons/users
     excludePaths:
         analyse:
-            - redaxo/src/addons/backup/vendor/
             - redaxo/src/addons/be_style/vendor/
             - redaxo/src/addons/debug/vendor/
-            - redaxo/src/addons/phpmailer/vendor/
             - redaxo/src/core/vendor/
     # https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:

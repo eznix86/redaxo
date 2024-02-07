@@ -39,7 +39,7 @@ class rex_be_controller
     /**
      * @template T of positive-int|null
      * @param T $part Part index, beginning with 1. If $part is null, an array of all current parts will be returned
-     * @param null|string $default Default value
+     * @param string|null $default Default value
      * @return list<string>|string|null
      * @psalm-return (T is null ? list<string> : string|null)
      */
@@ -173,6 +173,7 @@ class rex_be_controller
         if ('' != ini_get('error_log') && @is_readable(ini_get('error_log'))) {
             $logsPage->addSubpage((new rex_be_page('php', rex_i18n::msg('syslog_phperrors')))->setSubPath(rex_path::core('pages/system.log.external.php')));
         }
+        $logsPage->addSubpage((new rex_be_page('phpmailer', rex_i18n::msg('phpmailer_title')))->setSubPath(rex_path::core('pages/phpmailer.log.php')));
 
         if ('system' === self::getCurrentPagePart(1) && 'log' === self::getCurrentPagePart(2)) {
             $slowQueryLogPath = rex_sql_util::slowQueryLogPath();
@@ -181,24 +182,85 @@ class rex_be_controller
             }
         }
 
+        $logsPage->addSubpage((new rex_be_page('cronjob', rex_i18n::msg('cronjob_title')))->setSubPath(rex_path::core('pages/system.log.cronjob.php')));
+
         self::$pages['system'] = (new rex_be_page_main('system', 'system', rex_i18n::msg('system')))
             ->setPath(rex_path::core('pages/system.php'))
             ->setRequiredPermissions('isAdmin')
-            ->setPrio(80)
+            ->setPrio(100)
             ->setPjax()
             ->setIcon('rex-icon rex-icon-system')
             ->addSubpage((new rex_be_page('settings', rex_i18n::msg('main_preferences')))->setSubPath(rex_path::core('pages/system.settings.php')))
             ->addSubpage((new rex_be_page('lang', rex_i18n::msg('languages')))->setSubPath(rex_path::core('pages/system.clangs.php')))
             ->addSubpage($logsPage)
-            ->addSubpage((new rex_be_page('report', rex_i18n::msg('system_report')))
+            ->addSubpage(
+                (new rex_be_page('report', rex_i18n::msg('system_report')))
                 ->addSubpage((new rex_be_page('html', rex_i18n::msg('system_report')))->setSubPath(rex_path::core('pages/system.report.html.php')))
                 ->addSubpage((new rex_be_page('markdown', rex_i18n::msg('system_report_markdown')))->setSubPath(rex_path::core('pages/system.report.markdown.php'))),
             )
-            ->addSubpage((new rex_be_page('phpinfo', 'phpinfo'))
+            ->addSubpage(
+                (new rex_be_page('phpinfo', 'phpinfo'))
                 ->setHidden(true)
                 ->setHasLayout(false)
                 ->setPath(rex_path::core('pages/system.phpinfo.php')),
             );
+
+        self::$pages['users'] = (new rex_be_page_main('system', 'users', rex_i18n::msg('users')))
+            ->setPath(rex_path::core('pages/users.php'))
+            ->setRequiredPermissions('users[]')
+            ->setPrio(50)
+            ->setPjax()
+            ->setIcon('rex-icon rex-icon-user')
+            ->addSubpage(
+                (new rex_be_page('users', rex_i18n::msg('users')))
+                    ->setSubPath(rex_path::core('pages/users.users.php')),
+            )
+            ->addSubpage(
+                (new rex_be_page('roles', rex_i18n::msg('roles')))
+                    ->setSubPath(rex_path::core('pages/users.roles.php'))
+                    ->setRequiredPermissions('isAdmin'),
+            )
+        ;
+
+        self::$pages['cronjob'] = (new rex_be_page_main('system', 'cronjob', rex_i18n::msg('cronjob_title')))
+            ->setPath(rex_path::core('pages/cronjob.php'))
+            ->setRequiredPermissions('isAdmin')
+            ->setPrio(80)
+            ->setPjax()
+            ->setIcon('rex-icon rex-icon-cronjob')
+            ->addSubpage((new rex_be_page('cronjobs', rex_i18n::msg('cronjob_title')))->setSubPath(rex_path::core('pages/cronjob.cronjobs.php')))
+            ->addSubpage((new rex_be_page('log', rex_i18n::msg('cronjob_log')))->setSubPath(rex_path::core('pages/cronjob.log.php')))
+        ;
+
+        self::$pages['phpmailer'] = (new rex_be_page_main('system', 'phpmailer', rex_i18n::msg('phpmailer_title')))
+            ->setPath(rex_path::core('pages/phpmailer.php'))
+            ->setRequiredPermissions('phpmailer[]')
+            ->setPrio(90)
+            ->setPjax()
+            ->setIcon('rex-icon rex-icon-envelope')
+            ->addSubpage((new rex_be_page('config', rex_i18n::msg('phpmailer_configuration')))->setSubPath(rex_path::core('pages/phpmailer.config.php')))
+            ->addSubpage((new rex_be_page('log', rex_i18n::msg('phpmailer_logging')))->setSubPath(rex_path::core('pages/phpmailer.log.php')))
+            ->addSubpage((new rex_be_page('help', rex_i18n::msg('phpmailer_help')))->setSubPath(rex_path::core('pages/phpmailer.README.md')))
+            ->addSubpage((new rex_be_page('checkmail', rex_i18n::msg('phpmailer_checkmail')))->setSubPath(rex_path::core('pages/phpmailer.checkmail.php'))->setHidden(true))
+        ;
+
+        self::$pages['backup'] = (new rex_be_page_main('system', 'backup', rex_i18n::msg('backup_title')))
+            ->setPath(rex_path::core('pages/backup.php'))
+            ->setRequiredPermissions('isAdmin')
+            ->setPrio(110)
+            ->setPjax()
+            ->setIcon('rex-icon rex-icon-backup')
+            ->addSubpage(
+                (new rex_be_page('export', rex_i18n::msg('backup_export')))
+                    ->setSubPath(rex_path::core('pages/backup.export.php'))
+                    ->setRequiredPermissions('backup[export]'),
+            )
+            ->addSubpage(
+                (new rex_be_page('import', rex_i18n::msg('backup_import')))
+                    ->addSubpage((new rex_be_page('upload', rex_i18n::msg('backup_upload')))->setSubPath(rex_path::core('pages/backup.import.upload.php')))
+                    ->addSubpage((new rex_be_page('server', rex_i18n::msg('backup_load_from_server')))->setSubPath(rex_path::core('pages/backup.import.server.php'))),
+            )
+        ;
     }
 
     /**
@@ -255,11 +317,11 @@ class rex_be_controller
 
     /**
      * @param rex_be_page|array $page
-     * @param bool              $createMainPage
-     * @param string            $pageKey
-     * @param bool|string       $prefix
+     * @param bool $createMainPage
+     * @param string $pageKey
+     * @param bool|string $prefix
      *
-     * @return null|rex_be_page
+     * @return rex_be_page|null
      */
     private static function pageCreate($page, rex_package $package, $createMainPage, ?rex_be_page $parentPage = null, $pageKey = null, $prefix = false)
     {

@@ -28,10 +28,9 @@ class rex_setup
      * very basic setup steps, so everything is in place for our browser-based setup wizard.
      *
      * @param string $skinAddon
-     * @param string $skinPlugin
      * @return void
      */
-    public static function init($skinAddon = 'be_style', $skinPlugin = 'redaxo')
+    public static function init($skinAddon = 'be_style')
     {
         // initial purge all generated files
         rex_delete_cache();
@@ -47,14 +46,9 @@ class rex_setup
 
         // copy skins files/assets
         $skinAddon = rex_addon::get($skinAddon);
-        $skinPlugin = $skinAddon->getPlugin($skinPlugin);
         rex_dir::copy($skinAddon->getPath('assets'), $skinAddon->getAssetsPath());
-        rex_dir::copy($skinPlugin->getPath('assets'), $skinPlugin->getAssetsPath());
         if (is_file($skinAddon->getPath('install.php'))) {
             $skinAddon->includeFile('install.php');
-        }
-        if (is_file($skinPlugin->getPath('install.php'))) {
-            $skinPlugin->includeFile('install.php');
         }
     }
 
@@ -136,8 +130,8 @@ class rex_setup
      * Checks the version of the connected database server.
      * When validation of the database configs succeeds the settings will be used for rex_sql.
      *
-     * @param array $config   array of database config
-     * @param bool  $createDb Should the database be created, if it not exists
+     * @param array $config array of database config
+     * @param bool $createDb Should the database be created, if it not exists
      *
      * @return string Error message
      */
@@ -192,6 +186,7 @@ class rex_setup
         $deprecatedVersions = [
             '8.1' => '2024-11-01',
             '8.2' => '2025-12-01',
+            '8.3' => '2026-12-01',
         ];
 
         $versionNumber = rex_formatter::version(PHP_VERSION, '%s.%s');
@@ -234,6 +229,9 @@ class rex_setup
                 '10.9' => '2023-08-01',
                 '10.10' => '2023-11-01',
                 '10.11' => '2028-02-01', // LTS
+                '11.0' => '2024-06-01',
+                '11.1' => '2024-08-01',
+                '11.2' => '2024-11-01',
             ];
 
             $versionNumber = rex_formatter::version($dbVersion, '%s.%s');
@@ -250,6 +248,9 @@ class rex_setup
                 '5.6' => '2021-12-01',
                 '5.7' => '2023-10-01',
                 '8.0' => '2026-04-01',
+                '8.1' => '2023-10-01',
+                '8.2' => '2024-01-01',
+                '8.3' => '2024-04-01',
             ];
 
             $versionNumber = rex_formatter::version($dbVersion, '%s.%s');

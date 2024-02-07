@@ -14,21 +14,13 @@ if [ "true" = $(redaxo/bin/console config:get setup) ]; then
 fi
 
 packages="
-backup
 be_style
-be_style/customizer
-be_style/redaxo
-cronjob
 debug
 install
 media_manager
 mediapool
 metainfo
-phpmailer
 structure
-structure/content
-structure/history
-structure/version
 users
 "
 

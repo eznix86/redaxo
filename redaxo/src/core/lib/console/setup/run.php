@@ -14,7 +14,7 @@ use Symfony\Component\Console\Question\Question;
  */
 class rex_command_setup_run extends rex_console_command implements rex_command_only_setup_packages
 {
-    /** @var \Symfony\Component\Console\Style\SymfonyStyle */
+    /** @var Symfony\Component\Console\Style\SymfonyStyle */
     private $io;
 
     /** @var InputInterface */
@@ -246,15 +246,10 @@ class rex_command_setup_run extends rex_console_command implements rex_command_o
         // Search for exports
         $backups = [];
 
-        if (rex_addon::exists('backup')) {
-            // force loading rex_backup class, even if backup addon is not installed
-            require_once rex_path::addon('backup', 'lib/backup.php');
-
-            foreach (rex_backup::getBackupFiles('') as $file) {
-                $file = preg_replace('/\.sql(?:\.gz)?$/', '', $file, -1, $count);
-                if ($count) {
-                    $backups[] = $file;
-                }
+        foreach (rex_backup::getBackupFiles('') as $file) {
+            $file = preg_replace('/\.sql(?:\.gz)?$/', '', $file, -1, $count);
+            if ($count) {
+                $backups[] = $file;
             }
         }
 
@@ -491,10 +486,10 @@ class rex_command_setup_run extends rex_console_command implements rex_command_o
      * Helper function for getting values by option or ask()
      * Respects non-/interactive mode.
      *
-     * @param string|Question  $question       provide question string or full question object for ask()
-     * @param string           $option         cli option name
-     * @param string|bool|null $default        default value for ask()
-     * @param string|null      $successMessage success message for using the option value
+     * @param string|Question $question provide question string or full question object for ask()
+     * @param string $option cli option name
+     * @param string|bool|null $default default value for ask()
+     * @param string|null $successMessage success message for using the option value
      * @param callable(mixed):mixed|null $validator validator callback for option value and ask()
      *
      * @return mixed

@@ -7,18 +7,14 @@ $tools = __DIR__ . '/.tools';
 $finder = PhpCsFixer\Finder::create()
     ->in([
         $src . '/core',
-        $src . '/addons/backup',
         $src . '/addons/be_style',
-        $src . '/addons/cronjob',
         $src . '/addons/debug',
         $src . '/addons/install',
         $src . '/addons/media_manager',
         $src . '/addons/mediapool',
         $src . '/addons/metainfo',
-        $src . '/addons/phpmailer',
         $src . '/addons/project',
         $src . '/addons/structure',
-        $src . '/addons/users',
         $tools,
     ])
     ->append([

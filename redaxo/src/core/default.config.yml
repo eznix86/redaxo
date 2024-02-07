@@ -2,6 +2,7 @@ setup: true
 debug:
     enabled: false
     throw_always_exception: false # `true` for all error levels, `[E_WARNING, E_NOTICE]` for subset
+safemode: false
 instname: null
 server: https://www.redaxo.org/
 servername: REDAXO
@@ -64,17 +65,14 @@ start_page: structure
 timezone: Europe/Berlin
 socket_proxy: null
 setup_addons:
-    - backup
     - be_style
     - install
 system_addons:
-    - backup
     - mediapool
     - structure
     - metainfo
     - be_style
     - media_manager
-    - users
     - install
     - project
 table_prefix: rex_
